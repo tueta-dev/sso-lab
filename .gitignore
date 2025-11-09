@@ -1,0 +1,19 @@
+# Node / Next
+node_modules/
+apps/next/.next/
+apps/next/.env.local
+
+# PHP / Laravel
+apps/laravel/vendor/
+apps/laravel/storage/
+apps/laravel/.env
+
+# Docker
+docker-data/
+*.log
+
+# macOS
+.DS_Store
+
+# Editor
+.idea
