@@ -1,0 +1,22 @@
+services:
+  laravel:
+    build:
+      context: ./apps/laravel
+      dockerfile: ../../docker/laravel/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./apps/laravel:/var/www/html
+    working_dir: /var/www/html
+    command: php artisan serve --host=0.0.0.0 --port=8000
+
+  next:
+    build:
+      context: ./apps/next
+      dockerfile: ../../docker/next/Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/next:/app
+    working_dir: /app
+    command: npm run dev -- --hostname 0.0.0.0 --port 3000
