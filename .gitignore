@@ -1,5 +1,5 @@
 # Node / Next
-node_modules/
+apps/next/node_modules/
 apps/next/.next/
 apps/next/.env.local
 
