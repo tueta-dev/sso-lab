@@ -19,7 +19,7 @@ Keycloak + Next.js + Laravel で SSO の仕組みを理解するためのモノ�
 
 ## 前提環境
 - macOS
-- Docker Desktop
+- OrbStack
 - Volta（Node管理ツール）
 - PHP / Composer は Docker内で完結
 
