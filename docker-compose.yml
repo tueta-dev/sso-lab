@@ -20,3 +20,12 @@ services:
       - ./apps/next:/app
     working_dir: /app
     command: npm run dev -- --hostname 0.0.0.0 --port 3000
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.0
+    command: start-dev
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    ports:
+      - "8080:8080"
