@@ -4,8 +4,14 @@ FROM php:8.4-cli
 WORKDIR /var/www/html
 
 # 必要パッケージ & PHP拡張
-RUN apt-get update && apt-get install -y \
-    git unzip libpq-dev libzip-dev zip \
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+    git \
+    unzip \
+    libpq-dev \
+    libzip-dev \
+    zip \
+ && rm -rf /var/lib/apt/lists/* \
  && docker-php-ext-install pdo pdo_mysql
 
 # Composerを追加
