@@ -1,14 +1,14 @@
 "use client";
 
-import { FormEvent } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export default function LoginScreen() {
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const backendUrl =
+    process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8000";
+
+  const handleLogin = () => {
+    window.location.href = `${backendUrl}/auth/login`;
   };
 
   return (
@@ -22,29 +22,16 @@ export default function LoginScreen() {
             メールアドレスとパスワードを入力してください。
           </CardDescription>
         </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">メールアドレス</Label>
-              <Input id="email" name="email" type="email" autoComplete="email" required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">パスワード</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-              />
-            </div>
-          </CardContent>
-          <CardFooter className="mt-2">
-            <Button type="submit" className="w-full">
-              ログイン
-            </Button>
-          </CardFooter>
-        </form>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            ログインボタンを押すと、認証のために Keycloak に移動します。
+          </p>
+        </CardContent>
+        <CardFooter className="mt-2">
+          <Button type="button" className="w-full" onClick={handleLogin}>
+            ログイン
+          </Button>
+        </CardFooter>
       </Card>
     </div>
   );
