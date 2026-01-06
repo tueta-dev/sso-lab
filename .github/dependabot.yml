@@ -6,27 +6,47 @@ updates:
       interval: "daily"
       time: "09:00"
       timezone: "Asia/Tokyo"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
   - package-ecosystem: "npm"
     directory: "/apps/laravel"
     schedule:
       interval: "daily"
       time: "09:00"
       timezone: "Asia/Tokyo"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
   - package-ecosystem: "composer"
     directory: "/apps/laravel"
     schedule:
       interval: "daily"
       time: "09:00"
       timezone: "Asia/Tokyo"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
   - package-ecosystem: "docker"
     directory: "/docker/next"
     schedule:
       interval: "daily"
       time: "09:00"
       timezone: "Asia/Tokyo"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
   - package-ecosystem: "docker"
     directory: "/docker/laravel"
     schedule:
       interval: "daily"
       time: "09:00"
       timezone: "Asia/Tokyo"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
