@@ -1,4 +1,4 @@
-FROM php:8.4-cli
+FROM php:8.5-cli
 
 # 作業ディレクトリ
 WORKDIR /var/www/html
