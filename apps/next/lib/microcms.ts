@@ -41,13 +41,17 @@ const buildBaseUrl = () => {
   return `https://${serviceDomain}.microcms.io/api/v1/${endpoint}`;
 };
 
-const fetchFromMicroCms = async <T>(url: URL): Promise<T> => {
+const fetchFromMicroCms = async <T>(
+  url: URL,
+  init?: RequestInit,
+): Promise<T> => {
   const { apiKey } = resolveMicroCmsConfig();
   const response = await fetch(url, {
     headers: {
       "X-MICROCMS-API-KEY": apiKey,
     },
     next: { revalidate: 60 },
+    ...init,
   });
 
   if (!response.ok) {
@@ -78,7 +82,7 @@ export const getArticlePreviewById = async (
 
   const url = new URL(`${buildBaseUrl()}/${id}`);
   url.searchParams.set("draftKey", draftKey);
-  return fetchFromMicroCms<Article>(url);
+  return fetchFromMicroCms<Article>(url, { cache: "no-store" });
 };
 
 export const getArticleBySlug = async (slug: string) => {
