@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getArticles } from "@/lib/microcms";
+import { getArticles, getCategories } from "@/lib/microcms";
 
 const formatDate = (value: string) =>
   new Date(value).toLocaleDateString("ja-JP", {
@@ -11,9 +11,30 @@ const formatDate = (value: string) =>
 
 export const revalidate = 60;
 
-export default async function ArticlesPage() {
+type ArticlesPageProps = {
+  searchParams: Promise<{ category?: string }>;
+};
+
+export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
   try {
-    const { contents } = await getArticles();
+    const [{ contents }, { contents: categoryContents }] = await Promise.all([
+      getArticles(),
+      getCategories(),
+    ]);
+    const { category } = await searchParams;
+
+    const categories = categoryContents.map((item) => ({
+      id: item.id,
+      name: item.name,
+    }));
+
+    const filteredContents = category
+      ? contents.filter(
+          (article) =>
+            article.category?.id === category ||
+            article.category?.name === category,
+        )
+      : contents;
 
     return (
       <div className="min-h-screen bg-white text-slate-900">
@@ -30,13 +51,45 @@ export default async function ArticlesPage() {
             </p>
           </header>
 
+          {categories.length > 0 ? (
+            <section className="flex flex-wrap items-center gap-2">
+              <Link
+                href="/articles"
+                className={`rounded-full border px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] transition ${
+                  category
+                    ? "border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700"
+                    : "border-slate-900 text-slate-900"
+                }`}
+              >
+                All
+              </Link>
+              {categories.map((item) => {
+                const isActive =
+                  category === item.id || category === item.name;
+                return (
+                  <Link
+                    key={item.id}
+                    href={`/articles?category=${encodeURIComponent(item.id)}`}
+                    className={`rounded-full border px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] transition ${
+                      isActive
+                        ? "border-slate-900 text-slate-900"
+                        : "border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700"
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                );
+              })}
+            </section>
+          ) : null}
+
           <section className="grid gap-6 md:grid-cols-2">
-            {contents.length === 0 ? (
+            {filteredContents.length === 0 ? (
               <div className="rounded-3xl border border-slate-200 bg-slate-50 px-6 py-8 text-slate-500">
                 まだ記事がありません。
               </div>
             ) : (
-              contents.map((article) => (
+              filteredContents.map((article) => (
                 <Link
                   key={article.id}
                   href={`/articles/${article.slug}`}
@@ -60,6 +113,11 @@ export default async function ArticlesPage() {
                       <h2 className="text-2xl font-semibold text-slate-900">
                         {article.title}
                       </h2>
+                      {article.category ? (
+                        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                          {article.category.name}
+                        </p>
+                      ) : null}
                     </div>
                     <span className="mt-auto text-sm font-semibold text-slate-700 transition group-hover:text-slate-900">
                       続きを読む →
