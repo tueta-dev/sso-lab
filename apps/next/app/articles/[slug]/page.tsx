@@ -1,7 +1,9 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import TableOfContents from "@/components/article/TableOfContents";
+import { buildArticleMetadata } from "@/lib/articleMetadata";
 import { getArticleBySlug } from "@/lib/microcms";
 import { sanitizeRichText } from "@/lib/sanitize";
 import { buildTocFromHtml } from "@/lib/toc";
@@ -18,6 +20,15 @@ export const revalidate = 60;
 type ArticleDetailPageProps = {
   params: Promise<{ slug: string }>;
 };
+
+export async function generateMetadata({
+  params,
+}: ArticleDetailPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const article = await getArticleBySlug(slug);
+
+  return buildArticleMetadata(article);
+}
 
 export default async function ArticleDetailPage({
   params,
@@ -66,7 +77,7 @@ export default async function ArticleDetailPage({
         ) : null}
 
         <article
-          className="space-y-6 text-base leading-7 text-slate-700 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:text-slate-900 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-slate-900 [&_a]:text-slate-900 [&_a]:underline [&_p]:leading-7"
+          className="prose prose-slate max-w-none"
           dangerouslySetInnerHTML={{
             __html: sanitizedHtml,
           }}
