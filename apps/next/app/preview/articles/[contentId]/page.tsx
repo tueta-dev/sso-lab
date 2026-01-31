@@ -1,8 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import TableOfContents from "@/components/article/TableOfContents";
 import { getArticlePreviewById } from "@/lib/microcms";
 import { sanitizeRichText } from "@/lib/sanitize";
+import { buildTocFromHtml } from "@/lib/toc";
 
 const formatDate = (value: string) =>
   new Date(value).toLocaleDateString("ja-JP", {
@@ -29,6 +31,11 @@ export default async function ArticlePreviewPage({
     notFound();
   }
 
+  const { html: htmlWithIds, items: tocItems } = buildTocFromHtml(
+    article.content,
+  );
+  const sanitizedHtml = sanitizeRichText(htmlWithIds);
+
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-10 px-6 py-16">
@@ -50,6 +57,8 @@ export default async function ArticlePreviewPage({
           </span>
         </div>
 
+        <TableOfContents items={tocItems} />
+
         {article.eyecatch?.url ? (
           <div className="relative aspect-[16/9] w-full overflow-hidden rounded-3xl border border-slate-200 bg-slate-50">
             <Image
@@ -62,9 +71,9 @@ export default async function ArticlePreviewPage({
         ) : null}
 
         <article
-          className="space-y-6 text-base leading-7 text-slate-700 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:text-slate-900 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-slate-900 [&_a]:text-slate-900 [&_a]:underline [&_p]:leading-7"
+          className="prose prose-slate max-w-none"
           dangerouslySetInnerHTML={{
-            __html: sanitizeRichText(article.content),
+            __html: sanitizedHtml,
           }}
         />
       </div>
