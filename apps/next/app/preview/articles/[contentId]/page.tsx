@@ -66,6 +66,7 @@ export default async function ArticlePreviewPage({
               alt={article.title}
               fill
               className="object-cover"
+              sizes="(min-width: 768px) 768px, 100vw"
             />
           </div>
         ) : null}
