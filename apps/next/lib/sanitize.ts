@@ -13,6 +13,16 @@ const allowedTags = [
   "ol",
   "li",
   "blockquote",
+  "table",
+  "thead",
+  "tbody",
+  "tfoot",
+  "tr",
+  "th",
+  "td",
+  "caption",
+  "colgroup",
+  "col",
   "a",
   "img",
   "code",
@@ -29,6 +39,9 @@ const allowedAttributes: sanitizeHtml.IOptions["allowedAttributes"] = {
   p: ["id"],
   code: ["class"],
   pre: ["class"],
+  table: ["class"],
+  th: ["colspan", "rowspan"],
+  td: ["colspan", "rowspan"],
 };
 
 const allowedSchemes = ["http", "https", "mailto"];
