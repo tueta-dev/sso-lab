@@ -3,6 +3,7 @@ import sanitizeHtml from "sanitize-html";
 const allowedTags = [
   "p",
   "br",
+  "h1",
   "h2",
   "h3",
   "h4",
@@ -12,6 +13,16 @@ const allowedTags = [
   "ol",
   "li",
   "blockquote",
+  "table",
+  "thead",
+  "tbody",
+  "tfoot",
+  "tr",
+  "th",
+  "td",
+  "caption",
+  "colgroup",
+  "col",
   "a",
   "img",
   "code",
@@ -21,12 +32,16 @@ const allowedTags = [
 const allowedAttributes: sanitizeHtml.IOptions["allowedAttributes"] = {
   a: ["href", "target", "rel"],
   img: ["src", "alt", "width", "height", "srcset", "sizes", "loading", "decoding"],
+  h1: ["id"],
   h2: ["id"],
   h3: ["id"],
   h4: ["id"],
   p: ["id"],
   code: ["class"],
   pre: ["class"],
+  table: ["class"],
+  th: ["colspan", "rowspan"],
+  td: ["colspan", "rowspan"],
 };
 
 const allowedSchemes = ["http", "https", "mailto"];
