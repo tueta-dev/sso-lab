@@ -63,11 +63,12 @@ const fetchFromMicroCms = async <T>(
   init?: RequestInit,
 ): Promise<T> => {
   const { apiKey } = resolveMicroCmsConfig();
+  const nextOptions = init?.next ?? { revalidate: 60 };
   const response = await fetch(url, {
     headers: {
       "X-MICROCMS-API-KEY": apiKey,
     },
-    next: { revalidate: 60 },
+    next: nextOptions,
     ...init,
   });
 
@@ -102,7 +103,10 @@ export const getArticlePreviewById = async (
   const { articlesEndpoint } = resolveMicroCmsConfig();
   const url = new URL(`${buildBaseUrl(articlesEndpoint)}/${id}`);
   url.searchParams.set("draftKey", draftKey);
-  return fetchFromMicroCms<Article>(url, { cache: "no-store" });
+  return fetchFromMicroCms<Article>(url, {
+    cache: "no-store",
+    next: { revalidate: 0 },
+  });
 };
 
 export const getArticleBySlug = async (slug: string) => {
