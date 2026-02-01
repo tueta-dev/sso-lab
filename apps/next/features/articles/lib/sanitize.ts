@@ -1,4 +1,4 @@
-import sanitizeHtml from "sanitize-html";
+import DOMPurify from "isomorphic-dompurify";
 
 const allowedTags = [
   "p",
@@ -29,7 +29,7 @@ const allowedTags = [
   "pre",
 ];
 
-const allowedAttributes: sanitizeHtml.IOptions["allowedAttributes"] = {
+const allowedAttributes = {
   a: ["href", "target", "rel"],
   img: ["src", "alt", "width", "height", "srcset", "sizes", "loading", "decoding"],
   h1: ["id"],
@@ -44,7 +44,9 @@ const allowedAttributes: sanitizeHtml.IOptions["allowedAttributes"] = {
   td: ["colspan", "rowspan"],
 };
 
-const allowedSchemes = ["http", "https", "mailto"];
+const allowedAttributeList = Array.from(
+  new Set(Object.values(allowedAttributes).flat()),
+);
 
 const sanitizeHref = (value: string | undefined) => {
   if (!value) {
@@ -69,31 +71,54 @@ const sanitizeHref = (value: string | undefined) => {
   return undefined;
 };
 
-export const sanitizeRichText = (html: string) =>
-  sanitizeHtml(html, {
-    allowedTags,
-    allowedAttributes,
-    allowedSchemes,
-    allowProtocolRelative: false,
-    transformTags: {
-      a: (tagName, attribs) => {
-        const safeHref = sanitizeHref(attribs.href);
-        const nextAttribs: Record<string, string> = {
-          ...attribs,
-          rel: "noopener noreferrer",
-          target: "_blank",
-        };
+let hooksInitialized = false;
 
-        if (safeHref) {
-          nextAttribs.href = safeHref;
-        } else {
-          delete nextAttribs.href;
-        }
+const ensureHooks = () => {
+  if (hooksInitialized) {
+    return;
+  }
 
-        return {
-          tagName,
-          attribs: nextAttribs,
-        };
-      },
-    },
+  DOMPurify.addHook("uponSanitizeAttribute", (node, data) => {
+    const tagName = node.tagName?.toLowerCase();
+    if (!tagName) {
+      return;
+    }
+
+    const allowedForTag =
+      allowedAttributes[tagName as keyof typeof allowedAttributes];
+
+    if (!allowedForTag || !allowedForTag.includes(data.attrName)) {
+      data.keepAttr = false;
+    }
   });
+
+  DOMPurify.addHook("afterSanitizeAttributes", (node) => {
+    if (node.tagName?.toLowerCase() !== "a") {
+      return;
+    }
+
+    const href = node.getAttribute("href") ?? undefined;
+    const safeHref = sanitizeHref(href);
+
+    if (safeHref) {
+      node.setAttribute("href", safeHref);
+    } else {
+      node.removeAttribute("href");
+    }
+
+    node.setAttribute("rel", "noopener noreferrer");
+    node.setAttribute("target", "_blank");
+  });
+
+  hooksInitialized = true;
+};
+
+export const sanitizeRichText = (html: string) => {
+  ensureHooks();
+
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: allowedTags,
+    ALLOWED_ATTR: allowedAttributeList,
+    ALLOW_UNKNOWN_PROTOCOLS: false,
+  });
+};
