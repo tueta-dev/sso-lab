@@ -1,8 +1,4 @@
-type TocItem = {
-  id: string;
-  text: string;
-  level: 1 | 2;
-};
+import type { TocItem } from "@/features/articles/lib/toc";
 
 type TableOfContentsProps = {
   items: TocItem[];
@@ -21,10 +17,7 @@ export default function TableOfContents({ items }: TableOfContentsProps) {
       <ol className="mt-4 space-y-2 text-sm text-slate-700">
         {items.map((item) => (
           <li key={item.id} className={item.level === 2 ? "pl-4" : ""}>
-            <a
-              href={`#${item.id}`}
-              className="transition hover:text-slate-900"
-            >
+            <a href={`#${item.id}`} className="transition hover:text-slate-900">
               {item.text}
             </a>
           </li>

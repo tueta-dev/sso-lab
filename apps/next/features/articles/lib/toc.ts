@@ -1,4 +1,4 @@
-type TocItem = {
+export type TocItem = {
   id: string;
   text: string;
   level: 1 | 2;
