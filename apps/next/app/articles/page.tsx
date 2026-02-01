@@ -8,7 +8,9 @@ type ArticlesPageProps = {
   searchParams: Promise<{ category?: string }>;
 };
 
-export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
+export default async function ArticlesPage({
+  searchParams,
+}: ArticlesPageProps) {
   const { category } = await searchParams;
   let errorMessage: string | null = null;
   let contents: Article[] = [];

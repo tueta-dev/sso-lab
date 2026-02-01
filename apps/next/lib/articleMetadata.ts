@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import type { Article } from "@/lib/microcms";
 
-export const buildArticleMetadata = (
-  article: Article | null,
-): Metadata => {
+export const buildArticleMetadata = (article: Article | null): Metadata => {
   if (!article) {
     return {
       title: "記事が見つかりません",

@@ -39,8 +39,7 @@ type ArticleSlugIndex = Pick<Article, "id" | "slug">;
 const resolveMicroCmsConfig = () => {
   const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
   const apiKey = process.env.MICROCMS_API_KEY;
-  const articlesEndpoint =
-    process.env.MICROCMS_ARTICLES_ENDPOINT ?? "articles";
+  const articlesEndpoint = process.env.MICROCMS_ARTICLES_ENDPOINT ?? "articles";
   const categoriesEndpoint =
     process.env.MICROCMS_CATEGORIES_ENDPOINT ?? "categories";
 
@@ -92,10 +91,7 @@ export const getArticleById = async (id: string) => {
   return fetchFromMicroCms<Article>(url);
 };
 
-export const getArticlePreviewById = async (
-  id: string,
-  draftKey?: string,
-) => {
+export const getArticlePreviewById = async (id: string, draftKey?: string) => {
   if (!draftKey) {
     return getArticleById(id);
   }
@@ -116,9 +112,8 @@ export const getArticleBySlug = async (slug: string) => {
   url.searchParams.set("fields", "id,slug");
   url.searchParams.set("limit", "1");
 
-  const data = await fetchFromMicroCms<MicroCmsListResponse<ArticleSlugIndex>>(
-    url,
-  );
+  const data =
+    await fetchFromMicroCms<MicroCmsListResponse<ArticleSlugIndex>>(url);
   const match = data.contents[0];
 
   if (!match) {

@@ -38,7 +38,8 @@ export default function ArticlesListScreen({
             ログイン後に読む、最新の記事
           </h1>
           <p className="max-w-2xl text-base leading-7 text-slate-600">
-            microCMS のコンテンツをそのまま反映。ログイン後はこの一覧に着地して、気になる記事へ進めます。
+            microCMS
+            のコンテンツをそのまま反映。ログイン後はこの一覧に着地して、気になる記事へ進めます。
           </p>
         </header>
 

@@ -31,7 +31,16 @@ const allowedTags = [
 
 const allowedAttributes = {
   a: ["href", "target", "rel"],
-  img: ["src", "alt", "width", "height", "srcset", "sizes", "loading", "decoding"],
+  img: [
+    "src",
+    "alt",
+    "width",
+    "height",
+    "srcset",
+    "sizes",
+    "loading",
+    "decoding",
+  ],
   h1: ["id"],
   h2: ["id"],
   h3: ["id"],
