@@ -4,12 +4,26 @@ type MicroCmsImage = {
   height: number;
 };
 
+export type MicroCmsCategory = {
+  id: string;
+  name: string;
+};
+
+type MicroCmsMetaGroup = {
+  metaDescription?: string;
+  ogImage?: MicroCmsImage;
+  noindex?: boolean;
+};
+
 export type Article = {
   id: string;
   title: string;
   slug: string;
+  description?: string;
   content: string;
   eyecatch?: MicroCmsImage;
+  category?: MicroCmsCategory;
+  metaGroup?: MicroCmsMetaGroup;
   publishedAt: string;
 };
 
@@ -25,7 +39,10 @@ type ArticleSlugIndex = Pick<Article, "id" | "slug">;
 const resolveMicroCmsConfig = () => {
   const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
   const apiKey = process.env.MICROCMS_API_KEY;
-  const endpoint = process.env.MICROCMS_ARTICLES_ENDPOINT ?? "articles";
+  const articlesEndpoint =
+    process.env.MICROCMS_ARTICLES_ENDPOINT ?? "articles";
+  const categoriesEndpoint =
+    process.env.MICROCMS_CATEGORIES_ENDPOINT ?? "categories";
 
   if (!serviceDomain || !apiKey) {
     throw new Error(
@@ -33,11 +50,11 @@ const resolveMicroCmsConfig = () => {
     );
   }
 
-  return { serviceDomain, apiKey, endpoint };
+  return { serviceDomain, apiKey, articlesEndpoint, categoriesEndpoint };
 };
 
-const buildBaseUrl = () => {
-  const { serviceDomain, endpoint } = resolveMicroCmsConfig();
+const buildBaseUrl = (endpoint: string) => {
+  const { serviceDomain } = resolveMicroCmsConfig();
   return `https://${serviceDomain}.microcms.io/api/v1/${endpoint}`;
 };
 
@@ -46,11 +63,12 @@ const fetchFromMicroCms = async <T>(
   init?: RequestInit,
 ): Promise<T> => {
   const { apiKey } = resolveMicroCmsConfig();
+  const nextOptions = init?.next ?? { revalidate: 60 };
   const response = await fetch(url, {
     headers: {
       "X-MICROCMS-API-KEY": apiKey,
     },
-    next: { revalidate: 60 },
+    next: nextOptions,
     ...init,
   });
 
@@ -62,13 +80,15 @@ const fetchFromMicroCms = async <T>(
 };
 
 export const getArticles = async () => {
-  const url = new URL(buildBaseUrl());
+  const { articlesEndpoint } = resolveMicroCmsConfig();
+  const url = new URL(buildBaseUrl(articlesEndpoint));
 
   return fetchFromMicroCms<MicroCmsListResponse<Article>>(url);
 };
 
 export const getArticleById = async (id: string) => {
-  const url = new URL(`${buildBaseUrl()}/${id}`);
+  const { articlesEndpoint } = resolveMicroCmsConfig();
+  const url = new URL(`${buildBaseUrl(articlesEndpoint)}/${id}`);
   return fetchFromMicroCms<Article>(url);
 };
 
@@ -80,13 +100,18 @@ export const getArticlePreviewById = async (
     return getArticleById(id);
   }
 
-  const url = new URL(`${buildBaseUrl()}/${id}`);
+  const { articlesEndpoint } = resolveMicroCmsConfig();
+  const url = new URL(`${buildBaseUrl(articlesEndpoint)}/${id}`);
   url.searchParams.set("draftKey", draftKey);
-  return fetchFromMicroCms<Article>(url, { cache: "no-store" });
+  return fetchFromMicroCms<Article>(url, {
+    cache: "no-store",
+    next: { revalidate: 0 },
+  });
 };
 
 export const getArticleBySlug = async (slug: string) => {
-  const url = new URL(buildBaseUrl());
+  const { articlesEndpoint } = resolveMicroCmsConfig();
+  const url = new URL(buildBaseUrl(articlesEndpoint));
   url.searchParams.set("filters", `slug[equals]${slug}`);
   url.searchParams.set("fields", "id,slug");
   url.searchParams.set("limit", "1");
@@ -101,4 +126,11 @@ export const getArticleBySlug = async (slug: string) => {
   }
 
   return getArticleById(match.id);
+};
+
+export const getCategories = async () => {
+  const { categoriesEndpoint } = resolveMicroCmsConfig();
+  const url = new URL(buildBaseUrl(categoriesEndpoint));
+
+  return fetchFromMicroCms<MicroCmsListResponse<MicroCmsCategory>>(url);
 };
