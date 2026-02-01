@@ -10,7 +10,10 @@ export default function TableOfContents({ items }: TableOfContentsProps) {
   }
 
   return (
-    <nav className="rounded-3xl border border-slate-200 bg-slate-50 px-6 py-5">
+    <nav
+      className="rounded-3xl border border-slate-200 bg-slate-50 px-6 py-5"
+      aria-label="目次"
+    >
       <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
         目次
       </p>

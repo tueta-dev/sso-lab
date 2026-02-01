@@ -1,3 +1,5 @@
+import { decode } from "entities";
+
 export type TocItem = {
   id: string;
   text: string;
@@ -8,6 +10,7 @@ const headingRegex = /<h([12])([^>]*)>([\s\S]*?)<\/h\1>/gi;
 const idRegex = /id\s*=\s*(['"])(.*?)\1/i;
 
 const stripTags = (value: string) => value.replace(/<[^>]*>/g, "");
+const decodeEntities = (value: string) => decode(value);
 
 const slugify = (value: string) =>
   value
@@ -38,7 +41,7 @@ export const buildTocFromHtml = (html: string) => {
     headingRegex,
     (match, levelRaw: string, attrs: string, inner: string) => {
       const level = Number(levelRaw) as 1 | 2;
-      const text = stripTags(inner).trim();
+      const text = decodeEntities(stripTags(inner).trim());
       const existingIdMatch = attrs.match(idRegex);
       const existingId = existingIdMatch?.[2];
 
