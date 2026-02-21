@@ -4,13 +4,14 @@ Keycloak + Next.js + Laravel で SSO の仕組みを理解するためのモノ�
 ローカルを汚さず Docker / Volta で環境（Next.js と Laravel）を構築する。
 
 ## 構成
-- infra/keycloak # 認証基盤(Keycloak)
 - apps/next # Next.js (フロント)
 - apps/laravel # Laravel (API)
+- docker # Dockerfile など
+- docker-compose.yml # ローカル開発用スタック
 
 ## 技術スタック
-- **認証基盤 (infra/keycloak)**: 
-  - Keycloak 専用ディレクトリを用意済みで、今後公式 Keycloak イメージをベースにした Dockerfile・Realm/Client 設定・環境変数定義を追加予定（現状は空の `DockerFile` のみ）。
+- **認証基盤 (Keycloak)**: 
+  - docker-compose の `keycloak` サービスで `quay.io/keycloak/keycloak:25.0.0` を `start-dev` で起動。
 - **フロントエンド (apps/next)**: 
   - Next.js 16 + React 19 構成。`node:24-alpine` ベースの `docker/next/Dockerfile` 上で `/app` をマウントし、`npm run dev | build | start | lint` を実行する。
 - **API (apps/laravel)**: 
