@@ -40,6 +40,12 @@ export default function Home() {
           >
             ログインへ
           </Link>
+          <Link
+            href="/mypage"
+            className="inline-flex items-center justify-center rounded-full border border-zinc-300 px-6 py-2 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-800"
+          >
+            マイページを見る
+          </Link>
         </div>
         <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
           <a
